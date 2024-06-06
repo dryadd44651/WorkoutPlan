@@ -1,51 +1,52 @@
 class WorkoutPlan:
-    def __init__(self, exercises):
+    def __init__(self, exercises, cycles):
         self.exercises = exercises
+        self.cycles = cycles
 
-    def generate_plan(self, cycles):
+    def generate_plan(self):
         plan = []
-        for cycle in range(cycles):
+        for cycle in range(self.cycles):
             cycle_plan = []
-            for rep in range(4):
+            for rep in range(3):
                 for exercise in self.exercises:
                     base_weight = exercise['initial_weight'] + (exercise['weight_increase_cycle'] * cycle)
                     weight = base_weight + (exercise['weight_increase_item'] * rep)
-                    reps = [12, 10, 8, 5][rep]
-                    cycle_plan.append(f"{exercise['name']}{rep}: {weight} X{reps}")
+                    reps = [10, 8, 5][rep]
+                    cycle_plan.append(f"{exercise['name']:<15}{rep + 1}: {weight:<4} X {reps}")
             plan.append(cycle_plan)
         return plan
 
-    def display_plan(self, cycles):
-        plan = self.generate_plan(cycles)
+    def display_plan(self):
+        plan = self.generate_plan()
         for cycle_num, cycle in enumerate(plan):
             print(f"-- Cycle {cycle_num + 1} --")
             for item in cycle:
                 print(item)
             print()
 
+def read_exercises_from_file(filename):
+    exercises = []
+    cycles = 1
+    with open(filename, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if line.startswith('#') or not line:
+                continue
+            if line.startswith('cycles='):
+                cycles = int(line.split('=')[1])
+            else:
+                name, initial_weight, weight_increase_item, weight_increase_cycle = line.split(',')
+                exercises.append({
+                    'name': name,
+                    'initial_weight': float(initial_weight),
+                    'weight_increase_item': float(weight_increase_item),
+                    'weight_increase_cycle': float(weight_increase_cycle)
+                })
+    return exercises, cycles
+
 # Example Usage
-exercises = [
-    {
-        'name': 'bench press',
-        'initial_weight': 50,
-        'weight_increase_item': 5,
-        'weight_increase_cycle': 2.5
-    },
-    {
-        'name': 'squat',
-        'initial_weight': 100,
-        'weight_increase_item': 10,
-        'weight_increase_cycle': 5
-    },
-    {
-        'name': 'deadlift',
-        'initial_weight': 150,
-        'weight_increase_item': 10,
-        'weight_increase_cycle': 5
-    }
-]
+input_file = 'input.txt'
+exercises, cycles = read_exercises_from_file(input_file)
 
-cycles = 3
-
-workout_plan = WorkoutPlan(exercises)
-workout_plan.display_plan(cycles)
+workout_plan = WorkoutPlan(exercises, cycles)
+workout_plan.display_plan()

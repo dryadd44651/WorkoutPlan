@@ -1,0 +1,8 @@
+# Exercise name, Initial weight, Weight increase per item, Weight increase per cycle
+squat,50,20,5
+bench press,25,10,2.5
+row,25,10,2.5
+deadlift,50,20,5
+shoulder press,15,10,2.5
+# Number of cycles
+cycles=3
